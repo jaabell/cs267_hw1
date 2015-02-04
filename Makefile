@@ -3,8 +3,8 @@
 
 CC = cc 
 OPT1 = -O1
-OPT =  -O3 -fstrict-aliasing -std=c99
-CFLAGS = -Wall -std=gnu99 $(OPT)
+OPT =  -O2 -fstrict-aliasing -ffast-math -msse2
+CFLAGS = -Wall -std=gnu99 $(OPT) 
 LDFLAGS = -Wall
 # librt is needed for clock_gettime
 LDLIBS = -lrt 
@@ -12,7 +12,7 @@ MYLAPACK = /home/jaabell/Repositories/essi_dependencies/lib/liblapack.a \
 	/home/jaabell/Repositories/essi_dependencies/lib/libblas.a -lgfortran -lm 
 
 
-targets = benchmark-naive benchmark-blocked benchmark-blas
+targets = benchmark-naive benchmark-blocked benchmark-blas benchmark-ours
 objects = benchmark.o dgemm-naive.o dgemm-blocked.o dgemm-blas.o  
 
 .PHONY : default
@@ -26,6 +26,8 @@ benchmark-naive : benchmark.o dgemm-naive.o
 benchmark-blocked : benchmark.o dgemm-blocked.o
 	$(CC) -o $@ $^ $(MYLAPACK) $(LDLIBS) 
 benchmark-blas : benchmark.o dgemm-blas.o
+	$(CC) -o $@ $^ $(MYLAPACK) $(LDLIBS) 
+benchmark-ours : benchmark.o dgemm-ours.o
 	$(CC) -o $@ $^ $(MYLAPACK) $(LDLIBS) 
 
 %.o : %.c
