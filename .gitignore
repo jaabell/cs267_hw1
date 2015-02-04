@@ -1,2 +1,5 @@
 *.o
 *.pdf
+benchmark-blas
+benchmark-blocked
+benchmark-naive
