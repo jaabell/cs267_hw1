@@ -3,7 +3,19 @@
 
 CC = cc 
 OPT1 = -O1
-OPT =  -O3 -fstrict-aliasing -ffast-math -msse2  -ftree-vectorize
+OPT =  -O2   \
+	-march=sandybridge \
+	-mtune=sandybridge \
+	-ftree-vectorize \
+	-ftree-slp-vectorize \
+	-ffast-math  \
+	-funroll-loops \
+	-fvariable-expansion-in-unroller \
+	-floop-block \
+	-floop-strip-mine \
+	# -funsafe-loop-optimizations \
+	# -faggressive-loop-optimizations
+#-fstrict-aliasing
 CFLAGS = -Wall -std=gnu99 $(OPT) 
 LDFLAGS = -Wall
 # librt is needed for clock_gettime
