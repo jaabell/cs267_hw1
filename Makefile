@@ -24,8 +24,8 @@ MYLAPACK = /home/jaabell/Repositories/essi_dependencies/lib/liblapack.a \
 	/home/jaabell/Repositories/essi_dependencies/lib/libblas.a -lgfortran -lm 
 
 
-targets = benchmark-naive benchmark-blocked benchmark-blas
-objects = benchmark.o dgemm-naive.o dgemm-blocked.o dgemm-blas.o  
+targets = benchmark-naive benchmark-blocked benchmark-blas test_intrinsic
+objects = benchmark.o dgemm-naive.o dgemm-blocked.o dgemm-blas.o  test_intrinsic.o
 
 .PHONY : default
 default : all
@@ -38,6 +38,8 @@ benchmark-naive : benchmark.o dgemm-naive.o
 benchmark-blocked : benchmark.o dgemm-blocked.o
 	$(CC) -o $@ $^ $(MYLAPACK) $(LDLIBS) 
 benchmark-blas : benchmark.o dgemm-blas.o
+	$(CC) -o $@ $^ $(MYLAPACK) $(LDLIBS) 
+test_intrinsic : test_intrinsic.o
 	$(CC) -o $@ $^ $(MYLAPACK) $(LDLIBS) 
 
 %.o : %.c
