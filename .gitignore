@@ -4,3 +4,4 @@ benchmark-blas
 benchmark-blocked
 benchmark-naive
 test_intrinsic
+job-blocked.*
