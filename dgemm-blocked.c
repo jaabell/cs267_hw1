@@ -75,13 +75,13 @@ inline static void do_block (int lda, int M, int N, int K, double *restrict A, d
                     }
                     }*/
             }
-            for (; i < M; i++)
-            {
-                double a0 = AA[i];
-                double a1 = AA[i + lda];
-                CC[i] += a0 * b00 + a1 * b10;
-                CC[i + lda] += a0 * b01 + a1 * b11;
-            }
+            // for (; i < M; i++)
+            // {
+            //     double a0 = AA[i];
+            //     double a1 = AA[i + lda];
+            //     CC[i] += a0 * b00 + a1 * b10;
+            //     CC[i + lda] += a0 * b01 + a1 * b11;
+            // }
         }
 }
 
@@ -125,10 +125,6 @@ void square_dgemm (int lda, double *__restrict__  A, double   *__restrict__  B, 
                             double bb = Bbuf[kk + K * jj];
                             int ii = 0;
                             for (ii = 0; ii < M; ii++)
-                            {
-                                CC[ii] += AA[ii] * bb;
-                            }
-                            for (; ii < M; ii++)
                             {
                                 CC[ii] += AA[ii] * bb;
                             }
