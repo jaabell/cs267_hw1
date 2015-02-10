@@ -4,20 +4,13 @@ const char *dgemm_desc = "Simple blocked dgemm.";
 #define BLOCK_SIZE 64
 #endif
 
-// Number of registers
-#define NR 4
-
-// #include <stdlib.h>
 
 /* #define min(a,b) (((a)<(b))?(a):(b)) */
 
 /* non-branching min function */
 #define min(x,y) ((y) ^ ((x ^ (y)) & (-(x < y)))) /* The awkward parenthesis supresses compiler warnings :/ */
 
-
-// static double buf1[BLOCK_SIZE *BLOCK_SIZE];
 static double buf2[BLOCK_SIZE *BLOCK_SIZE];
-// static double buf3[BLOCK_SIZE *BLOCK_SIZE];
 
 #define REGBLOCK 2
 
@@ -37,59 +30,19 @@ inline static void do_block (int lda, int M, int N, int K, double *restrict A, d
             //            __builtin_assume_aligned(AA, 64);
             //            __builtin_assume_aligned(CC, 64);
             int i = 0;
-            //for(i=0;i+3<M;i+=4)//REGBLOCK)
-            //            for(i=0;i<M;i++)
 
             for (i = 0; i < M; i++)
             {
                 CC[i] += b00 * AA[i] + b10 * AA[i + lda];
                 CC[i + lda] += b01 * AA[i] + b11 * AA[i + lda];
-
-
-                //int MM=min(M-i,REGBLOCK);
-                //int NN=min(N-j,REGBLOCK);
-                //int KK=min(K-k,REGBLOCK);
-
-                /*double a0=AA[i];
-                double a1=AA[i+lda];
-                CC[i]+=a0*b00+a1*b10;
-                CC[i+lda]+=a0*b01+a1*b11;
-                a0=AA[i+1];
-                a1=AA[i+1+lda];
-                CC[i+1]+=a0*b00+a1*b10;
-                CC[i+1+lda]+=a0*b01+a1*b11;
-                a0=AA[i+2];
-                a1=AA[i+2+lda];
-                CC[i+2]+=a0*b00+a1*b10;
-                CC[i+2+lda]+=a0*b01+a1*b11;
-                a0=AA[i+3];
-                a1=AA[i+3+lda];
-                CC[i+3]+=a0*b00+a1*b10;
-                CC[i+3+lda]+=a0*b01+a1*b11;*/
-                /*for(int jj=0;jj<NN;jj++)
-                {
-                    for(int kk=0;kk<KK;kk++){
-                        double b=BB[kk+jj*lda];
-                        for(int ii=0;ii<MM;ii++)
-                            CC[ii+jj*lda]+=AA[ii+kk*lda]*BB[kk+jj*lda];
-                    }
-                    }*/
             }
-            // for (; i < M; i++)
-            // {
-            //     double a0 = AA[i];
-            //     double a1 = AA[i + lda];
-            //     CC[i] += a0 * b00 + a1 * b10;
-            //     CC[i + lda] += a0 * b01 + a1 * b11;
-            // }
+
         }
 }
 
 void square_dgemm (int lda, double *__restrict__  A, double   *__restrict__  B,  double *__restrict__ C)
 {
-    // static double *restrict Abuf = buf1;
     static double *restrict Bbuf = buf2;
-    // static double *restrict Cbuf = buf3;
 
 
     for (int j = 0; j < lda; j += BLOCK_SIZE)
@@ -97,7 +50,6 @@ void square_dgemm (int lda, double *__restrict__  A, double   *__restrict__  B, 
         int N = min (BLOCK_SIZE, lda - j);
         for (int k = 0; k < lda; k += BLOCK_SIZE)
         {
-            // double *bkj_block = B + k + j * lda;  //this had no significant impact
             int K = min (BLOCK_SIZE, lda - k);
 
             for (int jj = 0; jj < N; ++jj)
