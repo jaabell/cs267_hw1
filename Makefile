@@ -3,7 +3,7 @@
 
 CC = cc 
 OPT1 = -O1
-OPT =  -O2   \
+OPT =  -O3   \
 	-march=sandybridge \
 	-mtune=sandybridge \
 	-ftree-vectorize \
@@ -12,7 +12,7 @@ OPT =  -O2   \
 	-funroll-loops \
 	-fvariable-expansion-in-unroller \
 	-floop-block \
-	-floop-strip-mine \
+	-floop-strip-mine 
 	# -funsafe-loop-optimizations \
 	# -faggressive-loop-optimizations
 #-fstrict-aliasing
