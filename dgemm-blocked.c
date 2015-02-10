@@ -109,16 +109,20 @@ void square_dgemm (int lda, double *__restrict__  A, double   *__restrict__  B, 
             {
                 int M = min (BLOCK_SIZE, lda - i);
 
+                // =======
+                //If block has even dimensions, use fast register multiply
+                // =======
                 if (N % 2 == 0 && K % 2 == 0)
                 {
                     do_block(lda, M, N, K, A + i + k * lda, B + k + j * lda, C + i + j * lda);
                 }
-                else if (N % 2 == 1 && K % 2 == 0)
+                // =======
+                // Else, use the fast multiply on whatever subblock it can be used, then add the missing terms the naive way
+                // =======
+                else if (N % 2 == 1 && K % 2 == 0) //know N is even.. can do unrollage
                 {
                     do_block(lda, M, N - 1, K, A + i + k * lda, B + k + j * lda, C + i + j * lda);
-                    // do_block inlined
-                    // for (int jj = 0; jj < N; ++jj)
-                    // {
+
                     int jj = N - 1;
                     double *restrict CC = C + (i + (j + jj) * lda);
                     for (int kk = 0; kk < K; ++kk)
@@ -131,18 +135,17 @@ void square_dgemm (int lda, double *__restrict__  A, double   *__restrict__  B, 
                             CC[ii] += AA[ii] * bb;
                         }
                     }
-                    // }
+
                 }
-                else if (N % 2 == 0 && K % 2 == 1)
+                else if (N % 2 == 0 && K % 2 == 1) //know N is even.. can do unrollage
                 {
                     do_block(lda, M, N, K - 1, A + i + k * lda, B + k + j * lda, C + i + j * lda);
-                    // do_block inlined
+
+                    int kk = K - 1;
                     for (int jj = 0; jj < N; ++jj)
                     {
                         double *restrict CC = C + (i + (j + jj) * lda);
-                        // for (int kk = 0; kk < K; ++kk)
-                        // {
-                        int kk = K - 1;
+
                         double *restrict AA = A + (i + (k + kk) * lda);
                         double bb = Bbuf[kk + K * jj];
                         int ii = 0;
@@ -150,44 +153,36 @@ void square_dgemm (int lda, double *__restrict__  A, double   *__restrict__  B, 
                         {
                             CC[ii] += AA[ii] * bb;
                         }
-                        // }
                     }
                 }
                 else if (N % 2 == 1 && K % 2 == 1)
                 {
                     do_block(lda, M, N - 1, K - 1, A + i + k * lda, B + k + j * lda, C + i + j * lda);
-                    // do_block inlined
-                    // for (int jj = 0; jj < N; ++jj)
-                    // {
+
                     int jj = N - 1;
                     double *restrict CC = C + (i + (j + jj) * lda);
-                    for (int kk = 0; kk < K; ++kk)
+                    int ii = 0;
+                    for (ii = 0; ii < M; ii++)
                     {
-                        double *restrict AA = A + (i + (k + kk) * lda);
-                        double bb = Bbuf[kk + K * jj];
-                        int ii = 0;
-                        for (ii = 0; ii < M; ii++)
+                        for (int kk = 0; kk < K; ++kk)
                         {
+                            double *restrict AA = A + (i + (k + kk) * lda);
+                            double bb = Bbuf[kk + K * jj];
                             CC[ii] += AA[ii] * bb;
                         }
-                    }
-                    // }
-                    for (int jj = 0; jj < N - 1; ++jj)
-                    {
-                        double *restrict CC = C + (i + (j + jj) * lda);
-                        int kk = K - 1; // for (int kk = 0; kk < K; ++kk)
-                        // {
-                        double *restrict AA = A + (i + (k + kk) * lda);
-                        double bb = Bbuf[kk + K * jj];
-                        int ii = 0;
-                        for (ii = 0; ii < M; ii++)
+
+                        int kk = K - 1;
+                        for (int jj = 0; jj < N - 1; ++jj)
                         {
+                            double *restrict CC = C + (i + (j + jj) * lda);
+                            double *restrict AA = A + (i + (k + kk) * lda);
+                            double bb = Bbuf[kk + K * jj];
+
                             CC[ii] += AA[ii] * bb;
                         }
-                        // }
                     }
                 }
-
+                // =======
             }
         }
     }
