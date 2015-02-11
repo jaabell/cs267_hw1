@@ -3,7 +3,7 @@
 
 CC = cc 
 OPT1 = -O1
-OPT =  -O2 -S  \
+OPT =  -O2  \
 	-march=barcelona \
 	-ftree-vectorize \
 	-ftree-slp-vectorize \
