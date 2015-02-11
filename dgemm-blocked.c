@@ -6,7 +6,7 @@ const char *dgemm_desc = "Simple blocked dgemm.";
 #include <malloc.h>
 
 //Knobs
-#define BLOCK_SIZE 64
+#define BLOCK_SIZE 72
 #define PAD_NEXT_MULTIPLE 4
 #define ALIGNMENT_BOUNDARY 16
 #define REGBLOCK 2
