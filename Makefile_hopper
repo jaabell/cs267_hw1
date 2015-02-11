@@ -11,9 +11,9 @@ OPT =  -O3  \
 	-fvariable-expansion-in-unroller \
         -fsched-pressure \
         -funroll-all-loops \
-        -fprefetch-loop-arrays \ 
-	-floop-block 
-	#-ffast-math  \
+        -fprefetch-loop-arrays \
+        -ftree-vectorizer-verbose=3
+
 	#-floop-block
 	#-floop-strip-mine \
 	# -funsafe-loop-optimizations 
