@@ -10,7 +10,7 @@ const char *dgemm_desc = "Simple blocked dgemm.";
 #define PAD_NEXT_MULTIPLE 4
 #define ALIGNMENT_BOUNDARY 16
 #define REGBLOCK 2
-
+#define MAX_N 769
 /* #define min(a,b) (((a)<(b))?(a):(b)) */
 
 /* non-branching min function */
@@ -56,9 +56,14 @@ void square_dgemm (int lda_, double *__restrict__  A_, double   *__restrict__  B
     // int lda = nextpow2(lda_);
 
     //Pad matrices A and C with zeros, B will be buffered
-    double *restrict A = (double *) memalign ( (size_t )ALIGNMENT_BOUNDARY, (size_t )lda * lda * sizeof(double));
-    double *restrict C = (double *) memalign ( ALIGNMENT_BOUNDARY, lda * lda * sizeof(double));
+    // double *restrict A = (double *) memalign ( (size_t )ALIGNMENT_BOUNDARY, (size_t )lda * lda * sizeof(double));
+    // double *restrict C = (double *) memalign ( ALIGNMENT_BOUNDARY, lda * lda * sizeof(double));
     double *restrict B = B_;
+
+    double A[lda * lda] __attribute__((aligned(16)));
+    double C[lda * lda] __attribute__((aligned(16)));
+    // double A[lda*lda] __attribute__((aligned(16)));
+
     for (int i = 0; i < lda; ++i)
         for (int j = 0; j < lda; ++j)
         {
@@ -108,6 +113,6 @@ void square_dgemm (int lda_, double *__restrict__  A_, double   *__restrict__  B
         }
 
     // De-allocate memory :/ this is slow
-    free((void *)A);
-    free((void *)C);
+    // free((void *)A);
+    // free((void *)C);
 }
