@@ -3,17 +3,33 @@
 
 CC = cc 
 OPT1 = -O1
-OPT =  -O3   \
-	-march=native \
+OPT =  -O2   \
+	-march=barcelona \
 	-ftree-vectorize \
 	-ftree-slp-vectorize \
 	-ffast-math  \
 	-funroll-loops \
-	-fvariable-expansion-in-unroller 
+	-fvariable-expansion-in-unroller \
+        -fsched-pressure \
+        -funroll-all-loops \
+        -fprefetch-loop-arrays 
+ 
 	#-floop-block
 	#-floop-strip-mine \
-	# -funsafe-loop-optimizations \
-	# -faggressive-loop-optimizations
+	# -funsafe-loop-optimizations 
+OPT2 = -O2 \
+        -faggressive-loop-optimizations \
+        -march=barcelona \
+        -fschedule-insns \
+        -fschedule-insns2 \
+        -fsched-pressure \
+        -funroll-all-loops \
+        -fprefetch-loop-arrays \
+        --param prefetch-latency=300 \
+        -minline-all-stringops \
+        -fno-tree-pre \
+        -ftree-vectorize
+
 #-fstrict-aliasing
 CFLAGS = -Wall -std=gnu99 $(OPT) 
 LDFLAGS = -Wall

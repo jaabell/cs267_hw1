@@ -6,7 +6,7 @@ const char *dgemm_desc = "Simple blocked dgemm.";
 // #include <malloc.h>
 
 #if !defined(BLOCK_SIZE)
-#define BLOCK_SIZE 64
+#define BLOCK_SIZE 86 
 #endif
 
 #define ALIGNMENT_BOUNDARY 16
