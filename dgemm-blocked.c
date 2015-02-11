@@ -3,10 +3,10 @@ const char *dgemm_desc = "Simple blocked dgemm.";
 #include <emmintrin.h>
 #include <stdlib.h>
 #include <stdio.h>
-// #include <malloc.h>
+#include <malloc.h>
 
 #if !defined(BLOCK_SIZE)
-#define BLOCK_SIZE 86 
+#define BLOCK_SIZE 86
 #endif
 
 #define ALIGNMENT_BOUNDARY 16
@@ -81,11 +81,9 @@ void square_dgemm (int lda_, double *__restrict__  A_, double   *__restrict__  B
     // printf("sizeof(void*) = %d\n", sizeof(void *));
     // printf("sizeof(double*) = %d\n", sizeof(double *));
 
-    double *restrict A =   (double *) aligned_alloc ( (size_t )ALIGNMENT_BOUNDARY, (size_t )lda * lda * sizeof(double));
-    double *restrict B = 0;
-    B = (double *) aligned_alloc ( ALIGNMENT_BOUNDARY, lda * lda * sizeof(double));
-    double *restrict C = 0;
-    C = (double *) aligned_alloc ( ALIGNMENT_BOUNDARY, lda * lda * sizeof(double));
+    double *restrict A = (double *) memalign ( (size_t )ALIGNMENT_BOUNDARY, (size_t )lda * lda * sizeof(double));
+    double *restrict B = (double *) memalign ( ALIGNMENT_BOUNDARY, lda * lda * sizeof(double));
+    double *restrict C = (double *) memalign ( ALIGNMENT_BOUNDARY, lda * lda * sizeof(double));
 
     for (int i = 0; i < lda; ++i)
         for (int j = 0; j < lda; ++j)

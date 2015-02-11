@@ -17,7 +17,7 @@ OPT =  -O2   \
 	# -faggressive-loop-optimizations
 #-fstrict-aliasing
 # CFLAGS = -Wall -std=gnu99 $(OPT) 
-CFLAGS = -Wall -std=gnu11 $(OPT) 
+CFLAGS = -Wall -std=gnu99 $(OPT) 
 LDFLAGS = -Wall
 # librt is needed for clock_gettime
 LDLIBS = -lrt 
