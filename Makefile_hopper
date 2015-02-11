@@ -10,9 +10,11 @@ OPT =  -O2  \
 	-ffast-math  \
 	-funroll-loops \
 	-fvariable-expansion-in-unroller \
-        -fsched-pressure \
-        -funroll-all-loops \
-        -fprefetch-loop-arrays 
+    -fsched-pressure \
+    -funroll-all-loops \
+    -fprefetch-loop-arrays \
+    -ftree-vectorizer-verbose=3
+
  
 	#-floop-block
 	#-floop-strip-mine \

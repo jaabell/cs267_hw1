@@ -12,7 +12,8 @@ OPT =  -O2   \
 	-funroll-loops \
 	-fvariable-expansion-in-unroller \
 	-floop-block \
-	-floop-strip-mine 
+	-floop-strip-mine \
+	-ftree-vectorizer-verbose=3
 	# -funsafe-loop-optimizations \
 	# -faggressive-loop-optimizations
 #-fstrict-aliasing
