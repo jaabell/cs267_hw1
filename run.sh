@@ -1,6 +1,6 @@
 #!/bin/bash
 
-make clean
+#make clean
 make -f Makefile_hopper benchmark-blocked &> compile_log
 export jobname=$(qsub job-blocked)
 echo $jobname
