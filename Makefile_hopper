@@ -4,18 +4,18 @@
 CC = cc 
 OPT1 = -O1
 OPT =  -O3  \
-	-march=native \
-        -mtune=native \
+	-march=barcelona \
+        -mtune=barcelona \
         -ftree-vectorize \
         -ffast-math \
+        -funroll-all-loops \
+        -ftree-vectorizer-verbose=1 
         # -fprefetch-loop-arrays \
         # -fschedule-insns \
         # -fschedule-insns2 \
         # --param prefetch-latency=300 \
         # -fsched-pressure \
         # -faggressive-loop-optimizations \
-        # -funroll-all-loops \
-        -ftree-vectorizer-verbose=1 
         #-ftree-slp-vectorize \
         #-funroll-loops \
         # -fvariable-expansion-in-unroller \

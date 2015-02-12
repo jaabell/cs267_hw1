@@ -5,3 +5,4 @@ benchmark-blocked
 benchmark-naive
 test_intrinsic
 job-blocked.*
+sftp-config.json

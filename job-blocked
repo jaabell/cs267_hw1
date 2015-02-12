@@ -4,5 +4,12 @@
 #PBS -j eo
 #PBS -A mp309
 
+
+# to eliminate mmap use by malloc.
+setenv MALLOC_MMAP_MAX_ 0
+
+# to only trims heap when this amount total is freed
+setenv MALLOC_TRIM_THRESHOLD_ 536870912 
+
 cd $PBS_O_WORKDIR
 aprun -n 1 -N 1 ./benchmark-blocked

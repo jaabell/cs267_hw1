@@ -4,8 +4,8 @@
 CC = cc 
 OPT1 = -g -pg
 OPT =  -O2   \
-	-march=sandybridge \
-	-mtune=sandybridge \
+	-march=barcelona \
+	-mtune=barcelona \
 	-ftree-vectorize \
 	-ftree-slp-vectorize \
 	-ffast-math  \
