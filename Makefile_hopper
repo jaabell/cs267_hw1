@@ -3,30 +3,31 @@
 
 CC = cc 
 OPT1 = -O1
-OPT =  -Ofast \
-        -march=barcelona \
+OPT =  -O3  \
+	-march=native \
+        -mtune=native \
         -ftree-vectorize \
         -ffast-math \
-        -ftree-vectorizer-verbose=2 
-        #-fprefetch-loop-arrays \
+        # -fprefetch-loop-arrays \
+        # -fschedule-insns \
+        # -fschedule-insns2 \
+        # --param prefetch-latency=300 \
+        # -fsched-pressure \
+        # -faggressive-loop-optimizations \
+        # -funroll-all-loops \
+        -ftree-vectorizer-verbose=1 
         #-ftree-slp-vectorize \
         #-funroll-loops \
         # -fvariable-expansion-in-unroller \
         # -fsched-pressure \
         # -funroll-all-loops \
 
-	#-floop-block
-	#-floop-strip-mine \
-	# -funsafe-loop-optimizations 
+        #-floop-block
+        #-floop-strip-mine \
+        # -funsafe-loop-optimizations 
 OPT2 = -O2 \
-        -faggressive-loop-optimizations \
         -march=barcelona \
-        -fschedule-insns \
-        -fschedule-insns2 \
-        -fsched-pressure \
-        -funroll-all-loops \
         -fprefetch-loop-arrays \
-        --param prefetch-latency=300 \
         -minline-all-stringops \
         -fno-tree-pre \
         -ftree-vectorize
@@ -37,8 +38,6 @@ LDFLAGS = -Wall
 # librt is needed for clock_gettime
 LDLIBS = -lrt 
 MYLAPACK=
-#MYLAPACK = /home/jaabell/Repositories/essi_dependencies/lib/liblapack.a \
-#	/home/jaabell/Repositories/essi_dependencies/lib/libblas.a -lgfortran -lm 
 
 
 targets = benchmark-naive benchmark-blocked benchmark-blas
