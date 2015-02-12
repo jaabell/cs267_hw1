@@ -3,16 +3,17 @@
 
 CC = cc 
 OPT1 = -O1
-OPT =  -O2  \
-	-march=barcelona \
-	-ftree-vectorize \
-	-ftree-slp-vectorize \
-	-funroll-loops \
-	-fvariable-expansion-in-unroller \
-        -fsched-pressure \
-        -funroll-all-loops \
-        -fprefetch-loop-arrays \
-        -ftree-vectorizer-verbose=3
+OPT =  -Ofast \
+        -march=barcelona \
+        -ftree-vectorize \
+        -ffast-math \
+        -ftree-vectorizer-verbose=2 
+        #-fprefetch-loop-arrays \
+        #-ftree-slp-vectorize \
+        #-funroll-loops \
+        # -fvariable-expansion-in-unroller \
+        # -fsched-pressure \
+        # -funroll-all-loops \
 
 	#-floop-block
 	#-floop-strip-mine \
