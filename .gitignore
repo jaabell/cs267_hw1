@@ -6,3 +6,5 @@ benchmark-naive
 test_intrinsic
 job-blocked.*
 sftp-config.json
+dgemm-blocked_bak.c
+benchmark-foo

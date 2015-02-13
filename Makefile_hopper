@@ -2,17 +2,17 @@
 # This makefile is intended for the GNU C compiler. On Hopper, the Portland compilers are default, so you must instruct the Cray compiler wrappers to switch to GNU: type "module swap PrgEnv-pgi PrgEnv-gnu"
 
 CC = cc 
-OPT1 = -O1
-OPT =  -O3  \
+OPT1 = -g -pg
+OPT =  -Ofast  \
 	-march=barcelona \
         -mtune=barcelona \
         -ftree-vectorize \
         -ffast-math \
+        -fschedule-insns \
+        -fschedule-insns2 \
         -funroll-all-loops \
         -ftree-vectorizer-verbose=1 
         # -fprefetch-loop-arrays \
-        # -fschedule-insns \
-        # -fschedule-insns2 \
         # --param prefetch-latency=300 \
         # -fsched-pressure \
         # -faggressive-loop-optimizations \
