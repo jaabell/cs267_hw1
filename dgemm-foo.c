@@ -1,9 +1,10 @@
 const char *dgemm_desc = "Simple blocked dgemm.";
 
+#include <string.h>
 
 #define BLOCK_SIZEReg 4
-#define BLOCK_SIZEL1 16 // Should be multiple of BLOCK_SIZEReg
-#define BLOCK_SIZEL2 96
+#define BLOCK_SIZEL1 64 // Should be multiple of BLOCK_SIZEReg
+#define BLOCK_SIZEL2 256
 
 
 #define min(a,b) (((a)<(b))?(a):(b))
@@ -15,36 +16,52 @@ double BL2[BLOCK_SIZEL2 *BLOCK_SIZEL2] __attribute__((aligned(16)));
 double CL1[BLOCK_SIZEL1 *BLOCK_SIZEL1] __attribute__((aligned(16)));
 
 
+// inline void copy_block(double *restrict A, double *restrict ABuf, int M, int K, int lda, int lda_)
+// {
+//     for (int kk = 0; kk < K; ++kk)
+//     {
+//         memcpy(ABuf + lda_ * kk, A + kk * lda, sizeof(double)*M);
+//     }
+// }
+
 static inline void load_l1_block(int K, int M, int N, double *from, double *to)
 {
     int j = 0;
     for (; j < N; j++)
     {
-        int i = 0;
-        for (; i < M; i++)
-        {
-            *(to + i + j * BLOCK_SIZEL1) = *(from + i + j * K);
-        }
-        for (; i < BLOCK_SIZEL1; i++)
-        {
-            *(to + i + j * BLOCK_SIZEL1) = 0.0;
-        }
+        int i = M;
+        memcpy(to + j * BLOCK_SIZEL1,
+               from + j * K,
+               sizeof(double)*M);
+        // for (; i < M; i++)
+        // {
+        //     *(to + i + j * BLOCK_SIZEL1) = *(from + i + j * K);
+        // }
+        // for (; i < BLOCK_SIZEL1; i++)
+        // {
+        //     *(to + i + j * BLOCK_SIZEL1) = 0.0;
+        // }
+        memset(to + i + j * BLOCK_SIZEL1, 0, sizeof(to) * (BLOCK_SIZEL1 - i));
     }
     for (; j < BLOCK_SIZEL1; j++)
-        for (int i = 0; i < BLOCK_SIZEL1; i++)
-        {
-            *(to + i + j * BLOCK_SIZEL1) = 0.0;
-        }
+    {
+        memset(to + j * BLOCK_SIZEL1, 0, sizeof(to)*BLOCK_SIZEL1);
+    }
+    // for (int i = 0; i < BLOCK_SIZEL1; i++)
+    // {
+    //     *(to + i + j * BLOCK_SIZEL1) = 0.0;
+    // }
 }
 
 static inline void save_l1_block(int K, int M, int N, double *from, double *to)
 {
     for (int j = 0; j < N; j++)
     {
-        for (int i = 0; i < M; i++)
-        {
-            *(to + i + j * K) = *(from + i + j * BLOCK_SIZEL1);
-        }
+        memcpy(to + j * K, from + j * BLOCK_SIZEL1, sizeof(double)*M);
+        // for (int i = 0; i < M; i++)
+        // {
+        //     *(to + i + j * K) = *(from + i + j * BLOCK_SIZEL1);
+        // }
     }
 }
 
@@ -52,10 +69,11 @@ static inline void load_l2_block(int K, int M, int N, double *from, double *to)
 {
     for (int j = 0; j < N; j++)
     {
-        for (int i = 0; i < M; i++)
-        {
-            *(to + i + j * BLOCK_SIZEL2) = *(from + i + j * K);
-        }
+        memcpy(to + j * BLOCK_SIZEL2, from + j * K, sizeof(double)*M);
+        // for (int i = 0; i < M; i++)
+        // {
+        //     *(to + i + j * BLOCK_SIZEL2) = *(from + i + j * K);
+        // }
     }
 }
 

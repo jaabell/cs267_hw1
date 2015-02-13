@@ -3,7 +3,7 @@
 
 CC = cc 
 OPT1 = -g -pg
-OPT =  -Ofast  \
+OPT =  -O2  \
 	-march=barcelona \
         -mtune=barcelona \
         -ftree-vectorize \
@@ -40,8 +40,10 @@ LDLIBS = -lrt
 MYLAPACK=
 
 
-targets = benchmark-naive benchmark-blocked benchmark-blas benchmark-foo
-objects = benchmark.o dgemm-naive.o dgemm-blocked.o dgemm-blas.o dgemm-foo.o
+#targets = benchmark-naive benchmark-blocked benchmark-blas benchmark-foo benchmark-naive benchmark-blocked benchmark-blas benchmark-foo dgemm-blocked_new
+targets = benchmark-blocked_new benchmark-foo
+# objects = benchmark.o dgemm-naive.o dgemm-blocked.o dgemm-blocked_new.o  dgemm-blas.o dgemm-foo.o
+objects = benchmark.o  dgemm-blocked_new.o dgemm-foo.o 
  
 .PHONY : default
 default : all
@@ -52,6 +54,8 @@ all : clean $(targets)
 benchmark-naive : benchmark.o dgemm-naive.o 
 	$(CC) -o $@ $^ $(MYLAPACK) $(LDLIBS) 
 benchmark-blocked : benchmark.o dgemm-blocked.o
+	$(CC) -o $@ $^ $(MYLAPACK) $(LDLIBS) 
+benchmark-blocked_new : benchmark.o dgemm-blocked_new.o
 	$(CC) -o $@ $^ $(MYLAPACK) $(LDLIBS) 
 benchmark-blas : benchmark.o dgemm-blas.o
 	$(CC) -o $@ $^ $(MYLAPACK) $(LDLIBS) 
