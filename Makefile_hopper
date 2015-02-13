@@ -40,9 +40,9 @@ LDLIBS = -lrt
 MYLAPACK=
 
 
-targets = benchmark-naive benchmark-blocked benchmark-blas
-objects = benchmark.o dgemm-naive.o dgemm-blocked.o dgemm-blas.o  
-
+targets = benchmark-naive benchmark-blocked benchmark-blas benchmark-foo
+objects = benchmark.o dgemm-naive.o dgemm-blocked.o dgemm-blas.o dgemm-foo.o
+ 
 .PHONY : default
 default : all
 
@@ -55,6 +55,9 @@ benchmark-blocked : benchmark.o dgemm-blocked.o
 	$(CC) -o $@ $^ $(MYLAPACK) $(LDLIBS) 
 benchmark-blas : benchmark.o dgemm-blas.o
 	$(CC) -o $@ $^ $(MYLAPACK) $(LDLIBS) 
+benchmark-foo : benchmark.o dgemm-foo.o
+	$(CC) -o $@ $^ $(MYLAPACK) $(LDLIBS) 
+
 
 %.o : %.c
 	$(CC) -c $(CFLAGS) $<
