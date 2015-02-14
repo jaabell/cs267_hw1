@@ -1,10 +1,14 @@
-const char *dgemm_desc = "Simple blocked dgemm.";
-
-#include <string.h>
-
 #define BLOCK_SIZEReg 4
 #define BLOCK_SIZEL1 64 // Should be multiple of BLOCK_SIZEReg
 #define BLOCK_SIZEL2 256
+
+
+#include <string.h>
+
+
+const char *dgemm_desc = "Optimized-dgemm.";
+
+
 
 
 #define min(a,b) (((a)<(b))?(a):(b))
@@ -15,14 +19,8 @@ double AL2[BLOCK_SIZEL2 *BLOCK_SIZEL2] __attribute__((aligned(16)));
 double BL2[BLOCK_SIZEL2 *BLOCK_SIZEL2] __attribute__((aligned(16)));
 double CL1[BLOCK_SIZEL1 *BLOCK_SIZEL1] __attribute__((aligned(16)));
 
-
-// inline void copy_block(double *restrict A, double *restrict ABuf, int M, int K, int lda, int lda_)
-// {
-//     for (int kk = 0; kk < K; ++kk)
-//     {
-//         memcpy(ABuf + lda_ * kk, A + kk * lda, sizeof(double)*M);
-//     }
-// }
+double AREG[BLOCK_SIZEReg *BLOCK_SIZEReg] __attribute__((aligned(16)));
+double BREG[BLOCK_SIZEReg *BLOCK_SIZEReg] __attribute__((aligned(16)));
 
 static inline void load_l1_block(int K, int M, int N, double *from, double *to)
 {
@@ -33,24 +31,12 @@ static inline void load_l1_block(int K, int M, int N, double *from, double *to)
         memcpy(to + j * BLOCK_SIZEL1,
                from + j * K,
                sizeof(double)*M);
-        // for (; i < M; i++)
-        // {
-        //     *(to + i + j * BLOCK_SIZEL1) = *(from + i + j * K);
-        // }
-        // for (; i < BLOCK_SIZEL1; i++)
-        // {
-        //     *(to + i + j * BLOCK_SIZEL1) = 0.0;
-        // }
         memset(to + i + j * BLOCK_SIZEL1, 0, sizeof(to) * (BLOCK_SIZEL1 - i));
     }
     for (; j < BLOCK_SIZEL1; j++)
     {
         memset(to + j * BLOCK_SIZEL1, 0, sizeof(to)*BLOCK_SIZEL1);
     }
-    // for (int i = 0; i < BLOCK_SIZEL1; i++)
-    // {
-    //     *(to + i + j * BLOCK_SIZEL1) = 0.0;
-    // }
 }
 
 static inline void save_l1_block(int K, int M, int N, double *from, double *to)
@@ -58,10 +44,6 @@ static inline void save_l1_block(int K, int M, int N, double *from, double *to)
     for (int j = 0; j < N; j++)
     {
         memcpy(to + j * K, from + j * BLOCK_SIZEL1, sizeof(double)*M);
-        // for (int i = 0; i < M; i++)
-        // {
-        //     *(to + i + j * K) = *(from + i + j * BLOCK_SIZEL1);
-        // }
     }
 }
 
@@ -70,10 +52,6 @@ static inline void load_l2_block(int K, int M, int N, double *from, double *to)
     for (int j = 0; j < N; j++)
     {
         memcpy(to + j * BLOCK_SIZEL2, from + j * K, sizeof(double)*M);
-        // for (int i = 0; i < M; i++)
-        // {
-        //     *(to + i + j * BLOCK_SIZEL2) = *(from + i + j * K);
-        // }
     }
 }
 
@@ -83,8 +61,10 @@ static inline void load_l2_block(int K, int M, int N, double *from, double *to)
 
 static inline void do_block_l1 (int lda, int M, int N, int K, double *A, double *B, double *C)
 {
+
     /* For each row i of A */
     for (int j = 0; j < N; j += BLOCK_SIZEReg)
+    {
         /* For each column j of B */
         for (int k = 0; k < K; k += BLOCK_SIZEReg)
         {
@@ -156,7 +136,8 @@ static inline void do_block_l1 (int lda, int M, int N, int K, double *A, double 
             }
 #endif
 
-        }
+        } //For k
+    }//For j
 }
 
 
@@ -175,7 +156,8 @@ static inline void do_block_l2 (int lda, int M, int N, int K, double *A, double 
             for (int i = 0; i < M; i += BLOCK_SIZEL1)
             {
                 int M_ = min (BLOCK_SIZEL1, M - i);
-                load_l1_block(BLOCK_SIZEL2, M_, K_, A + i + k * BLOCK_SIZEL2, AL1);
+                // load_l1_block(BLOCK_SIZEL2, M_, K_, A + i + k * BLOCK_SIZEL2, AL1);
+                load_l1_block(lda, M_, K_, A + i + k * lda, AL1);
                 load_l1_block(lda, M_, N_, C + i + j * lda, CL1);
                 do_block_l1(lda, M_, N_, K_, AL1, BL1, CL1);
                 save_l1_block(lda, M_, N_, CL1, C + i + j * lda);
@@ -188,6 +170,7 @@ static inline void do_block_l2 (int lda, int M, int N, int K, double *A, double 
 
 void square_dgemm (int lda, double *A, double *B, double *C)
 {
+
     for (int j = 0; j < lda; j += BLOCK_SIZEL2)
     {
         int N = min (BLOCK_SIZEL2, lda - j);
@@ -198,10 +181,11 @@ void square_dgemm (int lda, double *A, double *B, double *C)
             for (int i = 0; i < lda; i += BLOCK_SIZEL2)
             {
                 int M = min (BLOCK_SIZEL2, lda - i);
-                load_l2_block(lda, M, K, A + i + k * lda, AL2);
-                do_block_l2(lda, M, N, K, AL2, BL2, C + i + j * lda);
+                // load_l2_block(lda, M, K, A + i + k * lda, AL2);
+                // do_block_l2(lda, M, N, K, AL2, BL2, C + i + j * lda);
+                do_block_l2(lda, M, N, K, A + i + k * lda, BL2, C + i + j * lda);
             }
         }
     }
-}
 
+}

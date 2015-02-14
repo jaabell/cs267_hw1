@@ -3,7 +3,7 @@
 
 CC = cc 
 OPT1 = -g -pg
-OPT =  -O2  \
+OPT =  -Ofast \
 	-march=barcelona \
         -mtune=barcelona \
         -ftree-vectorize \
@@ -33,7 +33,7 @@ OPT2 = -O2 \
         -ftree-vectorize
 
 #-fstrict-aliasing
-CFLAGS = -Wall -std=gnu99 $(OPT) 
+CFLAGS = -Wall -std=gnu99 $(OPT)  -msse -msse2 -msse3 
 LDFLAGS = -Wall
 # librt is needed for clock_gettime
 LDLIBS = -lrt 
@@ -41,9 +41,9 @@ MYLAPACK=
 
 
 #targets = benchmark-naive benchmark-blocked benchmark-blas benchmark-foo benchmark-naive benchmark-blocked benchmark-blas benchmark-foo dgemm-blocked_new
-targets = benchmark-blocked_new benchmark-foo
-# objects = benchmark.o dgemm-naive.o dgemm-blocked.o dgemm-blocked_new.o  dgemm-blas.o dgemm-foo.o
-objects = benchmark.o  dgemm-blocked_new.o dgemm-foo.o 
+targets = benchmark-foo
+objects = benchmark.o dgemm-naive.o dgemm-blocked.o dgemm-blocked_new.o  dgemm-blas.o dgemm-foo.o
+objects = benchmark.o  dgemm-blocked_new.o 
  
 .PHONY : default
 default : all
